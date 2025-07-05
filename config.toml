@@ -1,0 +1,4 @@
+baseURL = 'https://yuanfangbot.github.io/ai-blog-platform/'
+languageCode = 'en-us'
+title = 'AI-Powered Tech Blog'
+theme = 'hugo-theme-texify'
