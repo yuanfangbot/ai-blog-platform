@@ -1,0 +1,48 @@
+name: AI Article Generation & Deployment
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Run daily at midnight UTC
+  workflow_dispatch:
+
+jobs:
+  generate-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install openai beautifulsoup4 pygithub
+        
+    - name: Configure AI API
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        echo "AI configuration complete"
+        
+    - name: Generate articles
+      run: python scripts/generate_articles.py
+      
+    - name: Scrape and rewrite content
+      run: python scripts/content_scraper.py
+      
+    - name: Deploy to platforms
+      run: python scripts/deploy.py
+      
+    - name: Commit and push changes
+      run: |
+        git config user.name "yuanfangbot"
+        git config user.email "q877220880@qq.com"
+        git add content/posts/*
+        git commit -m "Automated: Add new articles"
+        git push
